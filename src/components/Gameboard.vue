@@ -6,9 +6,9 @@
           <v-layout>
             <v-flex xs8>
               <v-slider
-                v-model="difficultyLevel"
-                :tick-labels="levelLabels"
-                :max="2"
+                v-model="difficulty"
+                :tick-labels="levels"
+                max="2"
                 step="1"
                 color="red"
                 thumb-color="red"
@@ -17,16 +17,12 @@
               ></v-slider>
             </v-flex>
             <v-flex xs4>
-              <v-btn color="red" large icon>
-                <v-icon large>play_circle_outline</v-icon>
+              <v-btn class="ml-4" color="red" large icon @click="startGame">
+                <v-icon large>{{ game.isRunning ? 'pause_circle_outline' : 'play_circle_outline' }}</v-icon>
               </v-btn>
             </v-flex>
           </v-layout>
         </v-flex>
-        <div
-          pb-10
-          :class="['hidden-xs-only pb-2 font-weight-bold brown--text', $vuetify.breakpoint.smAndUp ? 'headline' : 'subheading']"
-        >Scoreboard</div>
         <v-flex sm2>
           <div>
             <div class="font-weight-bold subheading">Current user</div>
@@ -45,7 +41,7 @@
         </v-flex>
         <v-flex sm6 v-if="$vuetify.breakpoint.smAndUp">
           <v-card>
-            <v-card-title class="subheading font-weight-bold">High scores</v-card-title>
+            <v-card-title class="subheading font-weight-bold">Scoreboard</v-card-title>
             <v-divider></v-divider>
             <v-list dense>
               <v-list-tile v-for="score in highScores" :key="score.id">
@@ -75,26 +71,45 @@
 </template>
 
 <script>
-import { mapGetters } from "vuex";
+import { mapState, mapGetters, mapMutations } from "vuex";
 
 export default {
     name: 'Gameboard',
     props: {},
     data: () => ({
-        difficultyLevel: 1,
-        levelLabels: [
-            'Easy', 'Medium', 'Hard'
-        ],
-        numberOfRoachOptions:  5
+        
     }),
     methods: {
         getRandomCockroachImage() {
-            const randomImageIndex = Math.floor(Math.random() * this.numberOfRoachOptions) + 1;
+            const randomImageIndex = Math.floor(Math.random() * this.imageOptionsCount) + 1;
             return require(`../assets/roaches/roach-${randomImageIndex}.jpg`);
+        },
+        startGame() {
+            this.$store.dispatch('START_GAME');
         }
     },
     computed: {
-        ...mapGetters(['currentUser', 'currentHighScore', 'highScores'])
+        imageOptionsCount: {
+          get() {
+              return this.config.numberOfImageOptions
+          }  
+        },
+        levels: {
+          get() {
+              console.log(this.config.levelLabels);
+              return this.levelLabels;
+          }  
+        },
+        difficulty: {
+          set(level) {
+              this.$store.commit('setDifficulty', level);
+          },
+          get() {
+              return this.game.difficulty;
+          }
+        },
+        ...mapState(['config', 'game']),
+        ...mapGetters(['levelLabels', 'currentUser', 'currentHighScore', 'highScores'])
     }
 }
 </script>

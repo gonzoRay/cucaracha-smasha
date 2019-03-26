@@ -1,8 +1,10 @@
 <template>
-  <div id="app">
-    <Logo/>
-    <Gameboard/>
-  </div>
+  <v-app>
+    <div id="app">
+      <Logo/>
+      <Gameboard/>
+    </div>
+  </v-app>
 </template>
 
 <script>
