@@ -13,12 +13,13 @@
                 color="red"
                 thumb-color="red"
                 ticks="always"
-                tick-size="2"
+                tick-size="1"
+                :disabled="isRunning"
               ></v-slider>
             </v-flex>
             <v-flex xs4>
               <v-btn class="ml-4" color="red" large icon @click="startGame">
-                <v-icon large>{{ game.isRunning ? 'pause_circle_outline' : 'play_circle_outline' }}</v-icon>
+                <v-icon large>{{ isRunning ? 'pause_circle_outline' : 'play_circle_outline' }}</v-icon>
               </v-btn>
             </v-flex>
           </v-layout>
@@ -58,9 +59,9 @@
         <v-card-actions></v-card-actions>
         <v-container grid-list-sm fluid>
           <v-layout row wrap>
-            <v-flex v-for="n in 9" :key="n" xs4>
+            <v-flex v-for="tile in gameTiles" :key="tile.id" xs4>
               <v-card flat tile>
-                <v-img :src="getRandomCockroachImage()" height="150px"></v-img>
+                <v-img :src="tile.imageSrc" height="150px"></v-img>
               </v-card>
             </v-flex>
           </v-layout>
@@ -77,28 +78,23 @@ export default {
     name: 'Gameboard',
     props: {},
     data: () => ({
-        
+
     }),
     methods: {
-        getRandomCockroachImage() {
-            const randomImageIndex = Math.floor(Math.random() * this.imageOptionsCount) + 1;
-            return require(`../assets/roaches/roach-${randomImageIndex}.jpg`);
-        },
         startGame() {
             this.$store.dispatch('START_GAME');
         }
     },
     computed: {
-        imageOptionsCount: {
+        isRunning: {
           get() {
-              return this.config.numberOfImageOptions
-          }  
+            return this.game.isRunning;
+          }
         },
         levels: {
           get() {
-              console.log(this.config.levelLabels);
               return this.levelLabels;
-          }  
+          }
         },
         difficulty: {
           set(level) {
@@ -109,7 +105,10 @@ export default {
           }
         },
         ...mapState(['config', 'game']),
-        ...mapGetters(['levelLabels', 'currentUser', 'currentHighScore', 'highScores'])
+        ...mapGetters(['gameTiles', 'levelLabels', 'currentUser', 'currentHighScore', 'highScores'])
+    },
+    created() {
+      this.$store.dispatch('INIT_GAME');
     }
 }
 </script>

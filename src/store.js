@@ -3,18 +3,31 @@ import Vuex from 'vuex';
 
 Vue.use(Vuex);
 
+function showRandomRoachImage(state) {
+  console.log('showing a new roach!');
+  const randomTileIndex =
+    Math.floor(Math.random() * state.config.numberOfTiles) + 1;
+  const randomRoachIndex =
+    Math.floor(Math.random() * state.config.numberOfImageOptions) + 1;
+  state.game.tiles[
+    randomTileIndex
+  ].imageSrc = require(`@/assets/roaches/roach-${randomRoachIndex}.jpg`);
+}
+
 export default new Vuex.Store({
   state: {
     config: {
+      numberOfTiles: 9,
+      numberOfImageOptions: 5,
       gameDurationInMs: 4000,
       difficultyLevels: [
         { level: 0, label: 'Easy', speed: 1000 },
         { level: 1, label: 'Normal', speed: 750 },
         { level: 2, label: 'Hard', speed: 500 }
-      ],
-      numberOfImageOptions: 5
+      ]
     },
     game: {
+      tiles: [],
       difficulty: 1,
       isRunning: false,
       newRoachTimerId: undefined
@@ -30,6 +43,7 @@ export default new Vuex.Store({
     ]
   },
   getters: {
+    gameTiles: state => state.game.tiles,
     levelSpeed: state => level => {
       const targetLevel = state.config.difficultyLevels.find(
         l => l.level === level
@@ -42,6 +56,19 @@ export default new Vuex.Store({
     highScores: state => state.highScores
   },
   mutations: {
+    initGame(state, payload) {
+      for (let i = 0; i < payload; i++) {
+        state.game.tiles.push({
+          id: i,
+          imageSrc: require('@/assets/empty.png'),
+          scored: false
+        });
+      }
+    },
+    resetGame(state) {
+      state.game.tiles.length = 0;
+      state.game.isRunning = false;
+    },
     setGameTimer(state, payload) {
       state.game.isRunning = payload;
       let gameLog = payload
@@ -55,7 +82,7 @@ export default new Vuex.Store({
     startNewRoachTimer(state, payload) {
       console.info(`new roach every ${payload / 1000} seconds`);
       state.game.newRoachTimerId = setInterval(() => {
-        console.log('TODO: pop up a new roach!');
+        showRandomRoachImage(state);
       }, payload);
     },
     cancelNewRoachTimer(state) {
@@ -64,7 +91,13 @@ export default new Vuex.Store({
     }
   },
   actions: {
+    INIT_GAME({ state, commit }) {
+      commit('resetGame');
+      commit('initGame', state.config.numberOfTiles);
+    },
     START_GAME({ state, commit, getters }) {
+      commit('resetGame');
+      commit('initGame', state.config.numberOfTiles);
       commit('setGameTimer', true);
       const newRoachTimerSpeed = getters.levelSpeed(state.game.difficulty);
       commit('startNewRoachTimer', newRoachTimerSpeed);
