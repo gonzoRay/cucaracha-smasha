@@ -61,7 +61,7 @@
           <v-layout row wrap>
             <v-flex v-for="tile in gameTiles" :key="tile.id" xs4>
               <v-card flat tile>
-                <v-img :src="tile.imageSrc" height="150px"></v-img>
+                <v-img :src="tile.imageSrc" height="150px" @click="smash(tile.id)"></v-img>
               </v-card>
             </v-flex>
           </v-layout>
@@ -83,6 +83,9 @@ export default {
     methods: {
         startGame() {
             this.$store.dispatch('START_GAME');
+        },
+        smash(tileId) {
+            this.$store.dispatch('SMASH_ROACH', tileId);
         }
     },
     computed: {

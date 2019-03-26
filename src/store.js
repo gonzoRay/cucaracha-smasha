@@ -1,41 +1,17 @@
+import { calculateHighScore, cancelGameTimers, resetTile, showRandomRoachImage } from '@/state-helpers';
 import Vue from 'vue';
 import Vuex from 'vuex';
 
 Vue.use(Vuex);
-
-function showRandomRoachImage(state) {
-  console.log('showing a new roach!');
-  const randomTileIndex = Math.floor(
-    Math.random() * state.config.numberOfTiles
-  );
-
-  // Handle picking same tile twice.
-  if (state.game.currentTile === randomTileIndex) {
-    return showRandomRoachImage(state);
-  }
-
-  state.game.currentTile = randomTileIndex;
-
-  const randomRoachIndex =
-    Math.floor(Math.random() * state.config.numberOfImageOptions) + 1;
-  state.game.tiles[
-    state.game.currentTile
-  ].imageSrc = require(`@/assets/roaches/roach-${randomRoachIndex}.jpg`);
-}
-
-function resetTile(state, tileId) {
-  state.game.tiles.find(
-    t => t.id === tileId
-  ).imageSrc = require('@/assets/empty.png');
-}
 
 export default new Vuex.Store({
   state: {
     config: {
       numberOfTiles: 9,
       numberOfImageOptions: 5,
-      gameDurationInMs: 15000,
+      gameDurationInMs: 7000,
       tileDelayFactor: 0.3,
+      basePointsPerSmash: 10,
       difficultyLevels: [
         { level: 0, label: 'Easy', speed: 1500 },
         { level: 1, label: 'Normal', speed: 1250 },
@@ -47,10 +23,11 @@ export default new Vuex.Store({
       tiles: [],
       difficulty: 1,
       isRunning: false,
-      newRoachTimerId: undefined
+      newRoachTimerId: undefined,
+      currentScore: 0
     },
     currentUser: { name: 'reagan' },
-    currentHighScore: 50,
+    currentHighScore: 0,
     highScores: [
       { id: 1, name: 'jimi', score: 70 },
       { id: 2, name: 'sarah', score: 80 },
@@ -77,39 +54,42 @@ export default new Vuex.Store({
       for (let i = 0; i < payload; i++) {
         state.game.tiles.push({
           id: i,
-          imageSrc: require('@/assets/empty.png'),
-          scored: false
+          imageSrc: require('@/assets/empty.png')
         });
       }
     },
     resetGame(state) {
+      state.game.currentScore = 0;
       state.game.currentTile = -1;
       state.game.tiles.length = 0;
       state.game.isRunning = false;
     },
+    resetTile(state, payload) {
+      resetTile(state, payload);
+    },
     setGameTimer(state, payload) {
       state.game.isRunning = payload;
-      let gameLog = payload
-        ? `starting game clock at level ${state.game.difficulty}`
-        : 'stopping game clock';
-      console.info(gameLog);
     },
     setDifficulty(state, payload) {
       state.game.difficulty = payload;
     },
     startNewRoachTimer(state, payload) {
-      console.info(`new roach every ${payload / 1000} seconds`);
       state.game.newRoachTimerId = setInterval(() => {
         showRandomRoachImage(state);
-        setTimeout(
+        state.game.resetTileTimerId = setTimeout(
           () => resetTile(state, state.game.currentTile),
           payload / Number(1 + state.config.tileDelayFactor)
         );
       }, payload);
     },
-    cancelNewRoachTimer(state) {
-      console.info('stopping new roach timer');
-      clearInterval(state.game.newRoachTimerId);
+    endGame(state) {
+      cancelGameTimers(state);
+      calculateHighScore(state);
+    },
+    incrementScore(state) {
+      const weightedSmashScore = state.config.basePointsPerSmash * state.game.difficulty + 1;
+      state.game.currentScore =
+        state.game.currentScore + weightedSmashScore;
     }
   },
   actions: {
@@ -124,10 +104,14 @@ export default new Vuex.Store({
       const newRoachTimerSpeed = getters.levelSpeed(state.game.difficulty);
       commit('startNewRoachTimer', newRoachTimerSpeed);
 
-      setTimeout(() => {
+      state.game.mainGameTimerId = setTimeout(() => {
         commit('setGameTimer', false);
-        commit('cancelNewRoachTimer');
+        commit('endGame');
       }, state.config.gameDurationInMs);
+    },
+    SMASH_ROACH({ commit }, tileId) {
+      commit('resetTile', tileId);
+      commit('incrementScore');
     }
   }
 });
