@@ -4,7 +4,7 @@
       <v-layout :column="$vuetify.breakpoint.smAndUp" fill-height>
         <v-flex sm2 pb-5 d-inline-flex>
           <v-layout>
-            <v-flex xs8>
+            <v-flex xs8 :class="[$vuetify.breakpoint.xsOnly ? 'ml-2' : '']">
               <v-slider
                 v-model="difficulty"
                 :tick-labels="levels"
