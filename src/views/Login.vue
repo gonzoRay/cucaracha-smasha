@@ -1,6 +1,6 @@
 <template>
   <div class="login">
-    <Logo/>
+    <Logo></Logo>
     <h3 class="headline">Log in</h3>
     <input type="text" v-model="email" placeholder="Email address" class="input" required>
     <br>
