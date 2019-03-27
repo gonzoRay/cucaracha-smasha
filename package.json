@@ -6,7 +6,10 @@
     "serve": "vue-cli-service serve",
     "build": "vue-cli-service build",
     "lint": "vue-cli-service lint",
-    "test:unit": "vue-cli-service test:unit"
+    "test:unit": "vue-cli-service test:unit",
+    "deploy": "npm run deploy:site && npm run deploy:functions",
+    "deploy:site": "npm run build && cd dist/ && firebase deploy --only hosting",
+    "deploy:functions": "npm run deploy --prefix functions"
   },
   "dependencies": {
     "firebase": "^5.9.1",

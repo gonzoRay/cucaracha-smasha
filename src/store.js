@@ -113,6 +113,7 @@ export default new Vuex.Store({
         commit('endGame');
         await saveScore({
           playerId: getters.currentUser,
+          difficulty: state.game.difficulty,
           score: state.currentHighScore
         });
       }, state.config.gameDurationInMs);
