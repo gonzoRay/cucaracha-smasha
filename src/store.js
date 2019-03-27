@@ -1,3 +1,4 @@
+import { saveScore } from '@/functions';
 import { calculateHighScore, cancelGameTimers, resetTile, showRandomRoachImage } from '@/state-helpers';
 import Vue from 'vue';
 import Vuex from 'vuex';
@@ -107,9 +108,13 @@ export default new Vuex.Store({
       const newRoachTimerSpeed = getters.levelSpeed(state.game.difficulty);
       commit('startNewRoachTimer', newRoachTimerSpeed);
 
-      state.game.mainGameTimerId = setTimeout(() => {
+      state.game.mainGameTimerId = setTimeout(async () => {
         commit('setGameTimer', false);
         commit('endGame');
+        await saveScore({
+          playerId: getters.currentUser,
+          score: state.currentHighScore
+        });
       }, state.config.gameDurationInMs);
     },
     SMASH_ROACH({ commit }, tileId) {
