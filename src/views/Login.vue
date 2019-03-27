@@ -14,32 +14,36 @@
 </template>
 
 <script>
-  import firebase from 'firebase/app';
-  import 'firebase/auth';
-  import Logo from '@/components/Logo.vue';
+import firebase from 'firebase/app';
+import 'firebase/auth';
+import Logo from '@/components/Logo.vue';
 
-  export default {
-    name: 'Login',
-    components: {
-      Logo
-    },
-    data() {
-      return {
-        email: 'raygunc@gmail.com',
-        password: 'testing'
-      }
-    },
-    methods: {
-      login() {
-        firebase.auth().signInWithEmailAndPassword(this.email, this.password).then((user) => {
+export default {
+  name: 'Login',
+  components: {
+    Logo
+  },
+  data() {
+    return {
+      email: 'raygunc@gmail.com',
+      password: 'testing'
+    };
+  },
+  methods: {
+    login() {
+      firebase
+        .auth()
+        .signInWithEmailAndPassword(this.email, this.password)
+        .then(user => {
           this.$store.dispatch('SET_USER', user);
-          this.$router.replace('/game')
-        }).catch((err) => {
-          alert(err.message)
+          this.$router.replace('/game');
         })
-      }
+        .catch(err => {
+          alert(err.message);
+        });
     }
   }
+};
 </script>
 
 <style scoped>

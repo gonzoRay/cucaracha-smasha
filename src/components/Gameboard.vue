@@ -75,44 +75,48 @@
 import { mapState, mapGetters } from 'vuex';
 
 export default {
-    name: 'Gameboard',
-    props: {},
-    data: () => ({
-
-    }),
-    methods: {
-        startGame() {
-            this.$store.dispatch('START_GAME');
-        },
-        smash(tileId) {
-            this.$store.dispatch('SMASH_ROACH', tileId);
-        }
+  name: 'Gameboard',
+  props: {},
+  data: () => ({}),
+  methods: {
+    startGame() {
+      this.$store.dispatch('START_GAME');
     },
-    computed: {
-        isRunning: {
-          get() {
-            return this.game.isRunning;
-          }
-        },
-        levels: {
-          get() {
-              return this.levelLabels;
-          }
-        },
-        difficulty: {
-          set(level) {
-              this.$store.commit('setDifficulty', level);
-          },
-          get() {
-              return this.game.difficulty;
-          }
-        },
-        ...mapState(['config', 'game']),
-        ...mapGetters(['gameTiles', 'levelLabels', 'currentUser', 'currentHighScore', 'highScores'])
-    },
-    created() {
-      this.$store.dispatch('INIT_GAME');
+    smash(tileId) {
+      this.$store.dispatch('SMASH_ROACH', tileId);
     }
+  },
+  computed: {
+    isRunning: {
+      get() {
+        return this.game.isRunning;
+      }
+    },
+    levels: {
+      get() {
+        return this.levelLabels;
+      }
+    },
+    difficulty: {
+      set(level) {
+        this.$store.commit('setDifficulty', level);
+      },
+      get() {
+        return this.game.difficulty;
+      }
+    },
+    ...mapState(['config', 'game']),
+    ...mapGetters([
+      'gameTiles',
+      'levelLabels',
+      'currentUser',
+      'currentHighScore',
+      'highScores'
+    ])
+  },
+  created() {
+    this.$store.dispatch('INIT_GAME');
+  }
 };
 </script>
 
