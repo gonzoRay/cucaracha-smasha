@@ -1,22 +1,14 @@
 <template>
   <v-app>
     <div id="app">
-      <Logo/>
-      <Gameboard/>
+      <router-view/>
     </div>
   </v-app>
 </template>
 
 <script>
-import Logo from './components/Logo.vue';
-import Gameboard from './components/Gameboard.vue';
-
 export default {
-  name: "app",
-  components: {
-    Logo,
-    Gameboard
-  }
+  name: 'app'
 };
 </script>
 

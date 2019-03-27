@@ -26,7 +26,7 @@ export default new Vuex.Store({
       newRoachTimerId: undefined,
       currentScore: 0
     },
-    currentUser: { name: 'reagan' },
+    currentUser: undefined,
     currentHighScore: 0,
     highScores: [
       { id: 1, name: 'jimi', score: 70 },
@@ -45,7 +45,7 @@ export default new Vuex.Store({
       return targetLevel.speed;
     },
     levelLabels: state => state.config.difficultyLevels.map(l => l.label),
-    currentUser: state => state.currentUser,
+    currentUser: state => state.currentUser.user.email,
     currentHighScore: state => state.currentHighScore,
     highScores: state => state.highScores
   },
@@ -73,6 +73,9 @@ export default new Vuex.Store({
     setDifficulty(state, payload) {
       state.game.difficulty = payload;
     },
+    setUser(state, payload) {
+      state.currentUser = payload;
+    },
     startNewRoachTimer(state, payload) {
       state.game.newRoachTimerId = setInterval(() => {
         showRandomRoachImage(state);
@@ -87,9 +90,9 @@ export default new Vuex.Store({
       calculateHighScore(state);
     },
     incrementScore(state) {
-      const weightedSmashScore = state.config.basePointsPerSmash * state.game.difficulty + 1;
-      state.game.currentScore =
-        state.game.currentScore + weightedSmashScore;
+      const weightedSmashScore =
+        state.config.basePointsPerSmash * state.game.difficulty + 1;
+      state.game.currentScore = state.game.currentScore + weightedSmashScore;
     }
   },
   actions: {
@@ -112,6 +115,9 @@ export default new Vuex.Store({
     SMASH_ROACH({ commit }, tileId) {
       commit('resetTile', tileId);
       commit('incrementScore');
+    },
+    SET_USER({ commit }, user) {
+      commit('setUser', user);
     }
   }
 });

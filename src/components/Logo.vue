@@ -1,5 +1,8 @@
 <template>
   <v-layout column>
+    <v-flex v-if="isLoggedIn">
+      <v-btn @click="logout">Logout</v-btn>
+    </v-flex>
     <v-flex>
       <img
         alt="game logo"
@@ -20,8 +23,26 @@
 </template>
 
 <script>
+  import firebase from 'firebase/app';
+  import 'firebase/auth';
+
 export default {
-    name: "Logo"
+    name: 'Logo',
+    methods: {
+      logout () {
+        firebase.auth().signOut().then(() => {
+          this.$store.dispatch('SET_USER', null);
+          this.$router.replace('login')
+        })
+      }
+    },
+    computed: {
+      isLoggedIn: {
+        get() {
+          return firebase.auth().currentUser;
+        }
+      }
+    }
 }
 </script>
 

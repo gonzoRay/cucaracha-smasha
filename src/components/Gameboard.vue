@@ -29,7 +29,7 @@
             <div class="font-weight-bold subheading">Current user</div>
             <div
               :class="['red--text', $vuetify.breakpoint.smAndUp ? 'headline pt-10' : 'subheading']"
-            >{{ currentUser.name }}</div>
+            >{{ currentUser }}</div>
           </div>
         </v-flex>
         <v-flex sm2>
@@ -113,7 +113,7 @@ export default {
     created() {
       this.$store.dispatch('INIT_GAME');
     }
-}
+};
 </script>
 
 <style>
