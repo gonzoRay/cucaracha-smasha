@@ -34,7 +34,7 @@
         </v-flex>
         <v-flex sm2>
           <div>
-            <div class="font-weight-bold subheading">Your high score</div>
+            <div class="font-weight-bold subheading">High score</div>
             <div
               :class="['red--text', $vuetify.breakpoint.smAndUp ? 'headline pt-10' : 'subheading']"
             >{{ currentHighScore }}</div>

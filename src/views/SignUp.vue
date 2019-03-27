@@ -7,7 +7,9 @@
     <input v-model="password" type="password" class="input" placeholder="Password" required>
     <br>
     <v-btn color="primary" @click="signUp">Sign Up!</v-btn>
-    <v-btn to="/login">Back</v-btn>
+    <div>
+      <router-link to="/login">Back to Log in</router-link>
+    </div>
   </div>
 </template>
 
@@ -50,19 +52,5 @@ input {
   margin: 10px 0;
   width: auto;
   padding: 15px;
-}
-button {
-  margin: 10px 0;
-  background-color: #0476f2;
-}
-a {
-  color: #2c3e50;
-}
-p {
-  margin-top: 40px;
-  font-size: 13px;
-}
-h3 {
-  font-weight: normal;
 }
 </style>

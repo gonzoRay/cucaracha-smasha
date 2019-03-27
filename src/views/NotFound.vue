@@ -1,9 +1,9 @@
 <template>
   <div class="not-found">
     <Logo/>
-    <h3>Uh oh!</h3>
+    <h3 class="headline">Uh oh!</h3>
     <p>This isn't the page you're looking for.</p>
-    <button @click="notFound" class="button">Go Back To Login</button>
+    <v-btn @click="notFound">Go Back To Login</v-btn>
   </div>
 </template>
 
@@ -29,16 +29,5 @@ import Logo from '@/components/Logo.vue';
 <style scoped>
 .not-found {
   margin-top: 40px;
-}
-button {
-  margin: 10px 0;
-  background-color: #0476f2;
-}
-p {
-  margin-top: 40px;
-  font-size: 13px;
-}
-h3 {
-  font-weight: normal;
 }
 </style>
