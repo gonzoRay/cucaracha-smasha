@@ -14,9 +14,10 @@ This project is written in ES6 using Vuejs. It is styled w/ the Vuetify Material
 
 The following endpoint(s) are implemented as Cloud Functions in Firebase.
 
-| Function                     | Endpoint  | Method | Description                          |
-| ---------------------------- | --------- | :----: | ------------------------------------ |
-| `saveScore(playerId, score)` | saveScore |  POST  | store each finished game to document |
+| Function                         | Endpoint             | Method | Description                          |
+| -------------------------------- | -------------------- | :----: | ------------------------------------ |
+| `saveScore(playerId, score)`     | saveScore            |  POST  | store each finished game to document |
+| `getHighScoreByPlayer(playerId)` | getHighScoreByPlayer |  GET   | get high score for a given player    |
 
 ### Requirements
 
@@ -30,21 +31,24 @@ The following endpoint(s) are implemented as Cloud Functions in Firebase.
 - [x] extract state logic into helper
 - [x] Implement saveScore as cloud function
 - [x] Implement getPlayerHighScore as snapshot
-- [ ] Get current user's high score on login
+- [x] Get current user's high score on login
 
 ### Enhancements
 
-- [x] Deploy to Firebase hosting
+- [x] deploy to Firebase hosting
+- [x] create index for high score query
+- [ ] add loading indicator for high score endpoint
+- [ ] improve getHighScoreByPlayer function performance
 - [ ] use onAuthStateChanged event to persist displayName for player
 - [ ] implement onAuthStateChanged to save player
 - [ ] restrict CORS to hosted site only
 - [ ] add validation to login/signup
 - [ ] refactor Gameboard into separate components (GameControls and Scoreboard)
-- [ ] Implement login as cloud function
-- [ ] Implement signup as cloud function
-- [ ] Add custom theme/colors
-- [ ] Break out Vuex store into separate files
-- [ ] Add cloud firestore permissions
+- [ ] implement login as cloud function
+- [ ] implement signup as cloud function
+- [ ] add custom theme/colors
+- [ ] break out Vuex store into separate files
+- [ ] add cloud firestore permissions
 
 ## Project setup
 
