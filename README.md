@@ -8,13 +8,11 @@ This project is written in ES6 using Vuejs. It is styled w/ the Vuetify Material
 
 ### Endpoints
 
-The following endpoints are implemented as Cloud Functions in Firebase.
+The following endpoint(s) are implemented as Cloud Functions in Firebase.
 
-| Function                       | Endpoint               | Method | Description                                  |
-| ------------------------------ | ---------------------- | :----: | -------------------------------------------- |
-| `saveScore(playerId, score)`   | scores                 |  POST  | store each finished game to document         |
-| `getPlayerHighScore(playerId)` | scores/**{playerId}**  |  GET   | retrieve high score for a given **playerId** |
-| `getHighScores(count)`         | scores/top/**{count}** |  GET   | retrieve a list of the highest scores        |
+| Function                     | Endpoint  | Method | Description                          |
+| ---------------------------- | --------- | :----: | ------------------------------------ |
+| `saveScore(playerId, score)` | saveScore |  POST  | store each finished game to document |
 
 ### Requirements
 
@@ -27,22 +25,22 @@ The following endpoints are implemented as Cloud Functions in Firebase.
 - [x] add routing
 - [x] extract state logic into helper
 - [x] Implement saveScore as cloud function
-- [ ] Implement getPlayerHighScore as cloud function
-- [ ] Implement getHighScores as cloud function
+- [x] Implement getPlayerHighScore as snapshot
+- [ ] Get current user's high score on login
 
 ### Enhancements
 
+- [x] Deploy to Firebase hosting
+- [ ] use onAuthStateChanged event to persist displayName for player
+- [ ] implement onAuthStateChanged to save player
 - [ ] restrict CORS to hosted site only
 - [ ] add validation to login/signup
 - [ ] refactor Gameboard into separate components (GameControls and Scoreboard)
 - [ ] Implement login as cloud function
 - [ ] Implement signup as cloud function
-- [ ] Deploy to Firebase hosting
 - [ ] Add custom theme/colors
 - [ ] Break out Vuex store into separate files
 - [ ] Add cloud firestore permissions
-- [ ] implement onAuthStateChanged to save player
-- [ ] use onAuthStateChanged event to persist displayName for player
 
 ## Project setup
 

@@ -30,7 +30,7 @@ export default new Vuex.Store({
       newRoachTimerId: undefined,
       currentScore: 0
     },
-    currentUser: undefined,
+    currentUser: null,
     currentHighScore: 0,
     highScores: []
   },
@@ -43,7 +43,10 @@ export default new Vuex.Store({
       return targetLevel.speed;
     },
     levelLabels: state => state.config.difficultyLevels.map(l => l.label),
-    currentUser: state => state.currentUser.user.email,
+    currentUser: state =>
+      state.currentUser &&
+      state.currentUser.user &&
+      state.currentUser.user.email,
     currentHighScore: state => state.currentHighScore,
     highScores: state => state.highScores
   },
@@ -116,10 +119,11 @@ export default new Vuex.Store({
         commit('updateHighScores', highScores);
       }, onSnapshotError('Failed getting event data for high scores'));
     },
-    LOGOUT({ commit }) {
+    LOGOUT({ state, commit }) {
       if (highScoresUnsubscribe) {
         highScoresUnsubscribe();
       }
+      state.currentHighScore = 0;
       commit('setUser', null);
     },
     SET_USER({ commit }, user) {
