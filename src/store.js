@@ -1,5 +1,5 @@
 import { highScoresCollection, onSnapshotError } from '@/db';
-import { saveScore } from '@/functions';
+import { getHighScoreByPlayer, saveScore } from '@/functions';
 import { calculateHighScore, cancelGameTimers, resetTile, showRandomRoachImage } from '@/state-helpers';
 import Vue from 'vue';
 import Vuex from 'vuex';
@@ -83,6 +83,9 @@ export default new Vuex.Store({
     setDifficulty(state, payload) {
       state.game.difficulty = payload;
     },
+    setHighScore(state, payload) {
+      state.currentHighScore = payload;
+    },
     setUser(state, payload) {
       state.currentUser = payload;
     },
@@ -126,8 +129,12 @@ export default new Vuex.Store({
       state.currentHighScore = 0;
       commit('setUser', null);
     },
-    SET_USER({ commit }, user) {
+    async SET_USER({ commit, getters }, user) {
       commit('setUser', user);
+      const highScore = await getHighScoreByPlayer({
+        playerId: getters.currentUser
+      });
+      commit('setHighScore', highScore.data);
     },
     SMASH_ROACH({ commit }, tileId) {
       commit('resetTile', tileId);
