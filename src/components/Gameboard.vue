@@ -10,15 +10,22 @@
                 :tick-labels="levels"
                 max="2"
                 step="1"
-                color="red"
-                thumb-color="red"
+                color="red darken-2"
+                thumb-color="red darken-2"
                 ticks="always"
                 tick-size="1"
                 :disabled="isRunning"
               ></v-slider>
             </v-flex>
             <v-flex xs4>
-              <v-btn class="ml-4" color="red" :disabled="isRunning" large icon @click="startGame">
+              <v-btn
+                class="ml-4"
+                color="red darken-2"
+                :disabled="isRunning"
+                large
+                icon
+                @click="startGame"
+              >
                 <v-icon large>{{ isRunning ? 'pause_circle_outline' : 'play_circle_outline' }}</v-icon>
               </v-btn>
             </v-flex>
@@ -26,17 +33,9 @@
         </v-flex>
         <v-flex sm2>
           <div>
-            <div class="font-weight-bold subheading">Current user</div>
-            <div
-              :class="['red--text', $vuetify.breakpoint.smAndUp ? 'headline pt-10' : 'subheading']"
-            >{{ currentUser }}</div>
-          </div>
-        </v-flex>
-        <v-flex sm2>
-          <div>
             <div class="font-weight-bold subheading">High score</div>
             <div
-              :class="['red--text', $vuetify.breakpoint.smAndUp ? 'headline pt-10' : 'subheading']"
+              :class="['red--darken-2--text', $vuetify.breakpoint.smAndUp ? 'headline pt-10' : 'subheading']"
             >{{ currentHighScore }}</div>
           </div>
         </v-flex>

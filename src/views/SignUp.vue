@@ -6,7 +6,7 @@
     <br>
     <input v-model="password" type="password" class="input" placeholder="Password" required>
     <br>
-    <v-btn color="primary" @click="signUp">Sign Up!</v-btn>
+    <v-btn class="white--text" color="red darken-2" @click="signUp">Sign Up!</v-btn>
     <div>
       <router-link to="/login">Back to Log in</router-link>
     </div>
@@ -14,33 +14,36 @@
 </template>
 
 <script>
-  import Logo from '@/components/Logo.vue';
-  import firebase from 'firebase/app';
-  import 'firebase/auth';
+import Logo from '@/components/Logo.vue';
+import firebase from 'firebase/app';
+import 'firebase/auth';
 
-  export default {
-    name: 'Signup',
-    components: {
-      Logo
-    },
-    data() {
-      return {
-        name: '',
-        email: '',
-        password: ''
-      }
-    },
-    methods: {
-      signUp() {
-        firebase.auth().createUserWithEmailAndPassword(this.email, this.password).then((user) => {
-          this.$router.replace('/login')
+export default {
+  name: 'Signup',
+  components: {
+    Logo
+  },
+  data() {
+    return {
+      name: '',
+      email: '',
+      password: ''
+    };
+  },
+  methods: {
+    signUp() {
+      firebase
+        .auth()
+        .createUserWithEmailAndPassword(this.email, this.password)
+        .then(user => {
+          this.$router.replace('/login');
         })
-        .catch((err) => {
-          alert(err.message)
+        .catch(err => {
+          alert(err.message);
         });
-      }
     }
   }
+};
 </script>
 
 <style scoped>
