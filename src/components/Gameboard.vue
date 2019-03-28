@@ -18,7 +18,7 @@
               ></v-slider>
             </v-flex>
             <v-flex xs4>
-              <v-btn class="ml-4" color="red" large icon @click="startGame">
+              <v-btn class="ml-4" color="red" :disabled="isRunning" large icon @click="startGame">
                 <v-icon large>{{ isRunning ? 'pause_circle_outline' : 'play_circle_outline' }}</v-icon>
               </v-btn>
             </v-flex>
@@ -46,7 +46,7 @@
             <v-divider></v-divider>
             <v-list dense>
               <v-list-tile v-for="score in highScores" :key="score.id">
-                <v-list-tile-content>{{ score.name }}</v-list-tile-content>
+                <v-list-tile-content>{{ score.playerId }}</v-list-tile-content>
                 <v-list-tile-content class="align-end">{{ score.score }}</v-list-tile-content>
               </v-list-tile>
             </v-list>
@@ -116,6 +116,7 @@ export default {
   },
   created() {
     this.$store.dispatch('INIT_GAME');
+    this.$store.dispatch('LISTEN_HIGH_SCORES');
   }
 };
 </script>

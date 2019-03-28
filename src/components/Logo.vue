@@ -23,27 +23,31 @@
 </template>
 
 <script>
-  import firebase from 'firebase/app';
-  import 'firebase/auth';
+import firebase from 'firebase/app';
+import 'firebase/auth';
 
 export default {
-    name: 'Logo',
-    methods: {
-      logout () {
-        firebase.auth().signOut().then(() => {
+  name: 'Logo',
+  methods: {
+    logout() {
+      firebase
+        .auth()
+        .signOut()
+        .then(() => {
           this.$store.dispatch('SET_USER', null);
-          this.$router.replace('login')
-        })
-      }
-    },
-    computed: {
-      isLoggedIn: {
-        get() {
-          return firebase.auth().currentUser;
-        }
+          this.$store.dispatch('LOGOUT');
+          this.$router.replace('login');
+        });
+    }
+  },
+  computed: {
+    isLoggedIn: {
+      get() {
+        return firebase.auth().currentUser;
       }
     }
-}
+  }
+};
 </script>
 
 <style>

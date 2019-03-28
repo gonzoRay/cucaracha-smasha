@@ -6,7 +6,7 @@
     <br>
     <input type="password" v-model="password" placeholder="Password" class="input" required>
     <br>
-    <v-btn @click="login" color="primary">LOG IN</v-btn>
+    <v-btn @click="login" color="red">LOG IN</v-btn>
     <div>
       <router-link to="/signup">New Here? Create a new account</router-link>
     </div>

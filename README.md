@@ -33,6 +33,7 @@ The following endpoints are implemented as Cloud Functions in Firebase.
 ### Enhancements
 
 - [ ] restrict CORS to hosted site only
+- [ ] add validation to login/signup
 - [ ] refactor Gameboard into separate components (GameControls and Scoreboard)
 - [ ] Implement login as cloud function
 - [ ] Implement signup as cloud function

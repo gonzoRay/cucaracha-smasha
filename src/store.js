@@ -1,7 +1,10 @@
+import { highScoresCollection, onSnapshotError } from '@/db';
 import { saveScore } from '@/functions';
 import { calculateHighScore, cancelGameTimers, resetTile, showRandomRoachImage } from '@/state-helpers';
 import Vue from 'vue';
 import Vuex from 'vuex';
+
+let highScoresUnsubscribe;
 
 Vue.use(Vuex);
 
@@ -15,8 +18,8 @@ export default new Vuex.Store({
       basePointsPerSmash: 10,
       difficultyLevels: [
         { level: 0, label: 'Easy', speed: 1500 },
-        { level: 1, label: 'Normal', speed: 1250 },
-        { level: 2, label: 'Hard', speed: 800 }
+        { level: 1, label: 'Normal', speed: 1000 },
+        { level: 2, label: 'Hard', speed: 600 }
       ]
     },
     game: {
@@ -29,13 +32,7 @@ export default new Vuex.Store({
     },
     currentUser: undefined,
     currentHighScore: 0,
-    highScores: [
-      { id: 1, name: 'jimi', score: 70 },
-      { id: 2, name: 'sarah', score: 80 },
-      { id: 3, name: 'frank', score: 60 },
-      { id: 4, name: 'joe', score: 80 },
-      { id: 5, name: 'stella', score: 90 }
-    ]
+    highScores: []
   },
   getters: {
     gameTiles: state => state.game.tiles,
@@ -51,6 +48,10 @@ export default new Vuex.Store({
     highScores: state => state.highScores
   },
   mutations: {
+    endGame(state) {
+      cancelGameTimers(state);
+      calculateHighScore(state);
+    },
     initGame(state, payload) {
       for (let i = 0; i < payload; i++) {
         state.game.tiles.push({
@@ -58,6 +59,11 @@ export default new Vuex.Store({
           imageSrc: require('@/assets/empty.png')
         });
       }
+    },
+    incrementScore(state) {
+      const weightedSmashScore =
+        state.config.basePointsPerSmash * state.game.difficulty + 1;
+      state.game.currentScore = state.game.currentScore + weightedSmashScore;
     },
     resetGame(state) {
       state.game.currentScore = 0;
@@ -86,20 +92,42 @@ export default new Vuex.Store({
         );
       }, payload);
     },
-    endGame(state) {
-      cancelGameTimers(state);
-      calculateHighScore(state);
-    },
-    incrementScore(state) {
-      const weightedSmashScore =
-        state.config.basePointsPerSmash * state.game.difficulty + 1;
-      state.game.currentScore = state.game.currentScore + weightedSmashScore;
+    updateHighScores(state, payload) {
+      state.highScores = payload;
     }
   },
   actions: {
     INIT_GAME({ state, commit }) {
       commit('resetGame');
       commit('initGame', state.config.numberOfTiles);
+    },
+    LISTEN_HIGH_SCORES({ state, commit }) {
+      const highScores = [];
+      highScoresUnsubscribe = highScoresCollection.onSnapshot(scoresRef => {
+        highScores.length = 0;
+        state.highScores.length = 0;
+        scoresRef.forEach(doc => {
+          let score = {
+            id: doc.id
+          };
+          score = { ...{ id: doc.id }, ...doc.data() };
+          highScores.push(score);
+        });
+        commit('updateHighScores', highScores);
+      }, onSnapshotError('Failed getting event data for high scores'));
+    },
+    LOGOUT({ commit }) {
+      if (highScoresUnsubscribe) {
+        highScoresUnsubscribe();
+      }
+      commit('setUser', null);
+    },
+    SET_USER({ commit }, user) {
+      commit('setUser', user);
+    },
+    SMASH_ROACH({ commit }, tileId) {
+      commit('resetTile', tileId);
+      commit('incrementScore');
     },
     START_GAME({ state, commit, getters }) {
       commit('resetGame');
@@ -117,13 +145,6 @@ export default new Vuex.Store({
           score: state.currentHighScore
         });
       }, state.config.gameDurationInMs);
-    },
-    SMASH_ROACH({ commit }, tileId) {
-      commit('resetTile', tileId);
-      commit('incrementScore');
-    },
-    SET_USER({ commit }, user) {
-      commit('setUser', user);
     }
   }
 });
