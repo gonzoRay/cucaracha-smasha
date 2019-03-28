@@ -29,9 +29,10 @@ The following endpoint(s) are implemented as Cloud Functions in Firebase.
 - [x] login/signup support
 - [x] add routing
 - [x] extract state logic into helper
-- [x] Implement saveScore as cloud function
-- [x] Implement getPlayerHighScore as snapshot
-- [x] Get current user's high score on login
+- [x] implement saveScore as cloud function
+- [x] implement getPlayerHighScore as snapshot
+- [x] get current user's high score on login
+- [ ] create tests
 
 ### Enhancements
 
