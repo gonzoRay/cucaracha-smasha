@@ -34,12 +34,16 @@ The following endpoint(s) are implemented as Cloud Functions in Firebase.
 - [x] get current user's high score on login
 - [ ] create tests
 
+### Bugs
+
+- [ ] not loading player on signup
+
 ### Enhancements
 
 - [x] deploy to Firebase hosting
 - [x] create index for high score query
-- [ ] add loading indicator for high score endpoint
-- [ ] improve getHighScoreByPlayer function performance
+- [x] add loading indicator for high score endpoint
+- [x] improve getHighScoreByPlayer function performance
 - [ ] use onAuthStateChanged event to persist displayName for player
 - [ ] implement onAuthStateChanged to save player
 - [ ] restrict CORS to hosted site only

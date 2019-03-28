@@ -21,22 +21,36 @@ exports.saveScore = functions.https.onRequest((req, res) => {
 exports.getHighScoreByPlayer = functions.https.onRequest((req, res) => {
   cors(req, res, async () => {
     const { playerId } = req.body.data;
-    let highScore = '';
+    let highScore = 0;
 
-    const readResult = await admin
+    const checkUserResult = await admin
       .firestore()
       .collection('scores')
       .where('playerId', '==', playerId)
+      .get();
+
+    if (checkUserResult.empty) {
+      res.set('Access-Control-Allow-Origin', '*');
+      res.json({ data: highScore });
+      return;
+    }
+
+    const highScoreResult = await admin
+      .firestore()
+      .collection('scores')
+      .where('playerId', '==', playerId)
+      .where('playerId', '>=', '') //filter nulls
+      .orderBy('playerId')
       .orderBy('score', 'desc')
       .limit(1)
       .get();
 
-    if (readResult.empty) {
+    if (highScoreResult.empty) {
       return highScore;
     }
 
-    const result = readResult.docs[0] && readResult.docs[0].data();
-    highScore = result.score;
+    const result = highScoreResult.docs[0] && highScoreResult.docs[0].data();
+    highScore = Number(result.score);
 
     res.set('Access-Control-Allow-Origin', '*');
     res.json({ data: highScore });

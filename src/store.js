@@ -30,6 +30,8 @@ export default new Vuex.Store({
       newRoachTimerId: undefined,
       currentScore: 0
     },
+    isLoading: false,
+    isSaving: false,
     currentUser: null,
     currentHighScore: 0,
     highScores: []
@@ -86,6 +88,12 @@ export default new Vuex.Store({
     setHighScore(state, payload) {
       state.currentHighScore = payload;
     },
+    setLoading(state, payload) {
+      state.isLoading = payload;
+    },
+    setSaving(state, payload) {
+      state.isSaving = payload;
+    },
     setUser(state, payload) {
       state.currentUser = payload;
     },
@@ -131,9 +139,11 @@ export default new Vuex.Store({
     },
     async SET_USER({ commit, getters }, user) {
       commit('setUser', user);
+      commit('setLoading', true);
       const highScore = await getHighScoreByPlayer({
         playerId: getters.currentUser
       });
+      commit('setLoading', false);
       commit('setHighScore', highScore.data);
     },
     SMASH_ROACH({ commit }, tileId) {
@@ -150,12 +160,15 @@ export default new Vuex.Store({
       state.game.mainGameTimerId = setTimeout(async () => {
         commit('setGameTimer', false);
         commit('endGame');
+
+        commit('setSaving', true);
         await saveScore({
           playerId: getters.currentUser,
           difficulty: state.game.difficulty,
           score: state.currentHighScore
         });
       }, state.config.gameDurationInMs);
+      commit('setSaving', false);
     }
   }
 });
