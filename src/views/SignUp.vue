@@ -2,6 +2,8 @@
   <div class="sign-up">
     <Logo/>
     <h3>Create a new account</h3>
+    <input type="text" v-model="playerName" placeholder="Player name" class="input" required>
+    <br>
     <input v-model="email" type="text" class="input" placeholder="Email" required>
     <br>
     <input v-model="password" type="password" class="input" placeholder="Password" required>
@@ -25,7 +27,7 @@ export default {
   },
   data() {
     return {
-      name: '',
+      playerName: '',
       email: '',
       password: ''
     };
@@ -36,6 +38,7 @@ export default {
         .auth()
         .createUserWithEmailAndPassword(this.email, this.password)
         .then(user => {
+          this.$store.dispatch('SET_PLAYER_NAME', this.playerName);
           this.$router.replace('/login');
         })
         .catch(err => {

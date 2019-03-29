@@ -14,10 +14,12 @@ This project is written in ES6 using Vuejs. It is styled w/ the Vuetify Material
 
 The following endpoint(s) are implemented as Cloud Functions in Firebase.
 
-| Function                         | Endpoint             | Method | Description                          |
-| -------------------------------- | -------------------- | :----: | ------------------------------------ |
-| `saveScore(playerId, score)`     | saveScore            |  POST  | store each finished game to document |
-| `getHighScoreByPlayer(playerId)` | getHighScoreByPlayer |  GET   | get high score for a given player    |
+| Function                         | Endpoint             | Method | Description                                      |
+| -------------------------------- | -------------------- | :----: | ------------------------------------------------ |
+| `saveScore(playerId, score)`     | saveScore            |  POST  | store each finished game w/ score and difficulty |
+| `savePlayer(uid, name, email)`   | savePlayer           |  POST  | store each player to persist player name         |
+| `getPlayerByEmail(email)`        | getPlayerByEmail     |  GET   | get player profile                               |
+| `getHighScoreByPlayer(playerId)` | getHighScoreByPlayer |  GET   | get high score for a given player                |
 
 ### Requirements
 
@@ -36,7 +38,7 @@ The following endpoint(s) are implemented as Cloud Functions in Firebase.
 
 ### Bugs
 
-- [ ] not loading player on signup
+- [ ] loading flicker on login
 
 ### Enhancements
 
@@ -44,8 +46,8 @@ The following endpoint(s) are implemented as Cloud Functions in Firebase.
 - [x] create index for high score query
 - [x] add loading indicator for high score endpoint
 - [x] improve getHighScoreByPlayer function performance
-- [ ] use onAuthStateChanged event to persist displayName for player
-- [ ] implement onAuthStateChanged to save player
+- [x] use onAuthStateChanged event to persist displayName for player
+- [x] implement onAuthStateChanged to save player
 - [ ] restrict CORS to hosted site only
 - [ ] add validation to login/signup
 - [ ] refactor Gameboard into separate components (GameControls and Scoreboard)

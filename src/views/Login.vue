@@ -2,6 +2,7 @@
   <div class="login">
     <Logo></Logo>
     <h3 class="headline">Log in</h3>
+
     <input type="text" v-model="email" placeholder="Email address" class="input" required>
     <br>
     <input type="password" v-model="password" placeholder="Password" class="input" required>
@@ -35,7 +36,6 @@ export default {
         .auth()
         .signInWithEmailAndPassword(this.email, this.password)
         .then(user => {
-          this.$store.dispatch('SET_USER', user);
           this.$router.replace('/game');
         })
         .catch(err => {

@@ -1,5 +1,5 @@
 import { highScoresCollection, onSnapshotError } from '@/db';
-import { getHighScoreByPlayer, saveScore } from '@/functions';
+import { getHighScoreByPlayer, getPlayerByEmail, savePlayer, saveScore } from '@/functions';
 import { calculateHighScore, cancelGameTimers, resetTile, showRandomRoachImage } from '@/state-helpers';
 import Vue from 'vue';
 import Vuex from 'vuex';
@@ -32,11 +32,14 @@ export default new Vuex.Store({
     },
     isLoading: false,
     isSaving: false,
+    signupPlayerName: null,
     currentUser: null,
     currentHighScore: 0,
     highScores: []
   },
   getters: {
+    currentUser: state => state.currentUser,
+    currentHighScore: state => state.currentHighScore,
     gameTiles: state => state.game.tiles,
     levelSpeed: state => level => {
       const targetLevel = state.config.difficultyLevels.find(
@@ -44,13 +47,10 @@ export default new Vuex.Store({
       );
       return targetLevel.speed;
     },
+    highScores: state => state.highScores,
     levelLabels: state => state.config.difficultyLevels.map(l => l.label),
-    currentUser: state =>
-      state.currentUser &&
-      state.currentUser.user &&
-      state.currentUser.user.email,
-    currentHighScore: state => state.currentHighScore,
-    highScores: state => state.highScores
+    playerName: state => state.currentUser.name,
+    signupPlayerName: state => state.signupPlayerName
   },
   mutations: {
     endGame(state) {
@@ -91,6 +91,9 @@ export default new Vuex.Store({
     setLoading(state, payload) {
       state.isLoading = payload;
     },
+    setPlayerName(state, payload) {
+      state.signupPlayerName = payload;
+    },
     setSaving(state, payload) {
       state.isSaving = payload;
     },
@@ -100,9 +103,11 @@ export default new Vuex.Store({
     startNewRoachTimer(state, payload) {
       state.game.newRoachTimerId = setInterval(() => {
         showRandomRoachImage(state);
+        const resetTileDelay =
+          payload / Number(1 + state.config.tileDelayFactor);
         state.game.resetTileTimerId = setTimeout(
           () => resetTile(state, state.game.currentTile),
-          payload / Number(1 + state.config.tileDelayFactor)
+          resetTileDelay
         );
       }, payload);
     },
@@ -130,21 +135,47 @@ export default new Vuex.Store({
         commit('updateHighScores', highScores);
       }, onSnapshotError('Failed getting event data for high scores'));
     },
-    LOGOUT({ state, commit }) {
-      if (highScoresUnsubscribe) {
-        highScoresUnsubscribe();
-      }
-      state.currentHighScore = 0;
-      commit('setUser', null);
-    },
-    async SET_USER({ commit, getters }, user) {
-      commit('setUser', user);
-      commit('setLoading', true);
+    async LOAD_PLAYER_HIGH_SCORE({ commit }, email) {
       const highScore = await getHighScoreByPlayer({
-        playerId: getters.currentUser
+        playerId: email
       });
       commit('setLoading', false);
       commit('setHighScore', highScore.data);
+    },
+    LOGOUT({ commit }) {
+      if (highScoresUnsubscribe) {
+        highScoresUnsubscribe();
+      }
+      commit('setHighScore', 0);
+      commit('setUser', null);
+    },
+    SET_PLAYER_NAME({ commit }, name) {
+      commit('setPlayerName', name);
+    },
+    async SET_AUTHED_PLAYER({ commit, getters, dispatch }, authResult) {
+      const lookupPlayer = await getPlayerByEmail({ email: authResult.email });
+      const { uid, email } = authResult;
+
+      if (!lookupPlayer.data) {
+        const updatedPlayer = await savePlayer({
+          uid,
+          name: getters.signupPlayerName,
+          email
+        });
+        commit('setUser', updatedPlayer.data);
+
+        if (getters.currentUser) {
+          commit('setLoading', true);
+          const highScore = await getHighScoreByPlayer({
+            playerId: getters.currentUser.email
+          });
+          commit('setLoading', false);
+          commit('setHighScore', highScore.data);
+        }
+      } else {
+        commit('setUser', lookupPlayer.data);
+        dispatch('LOAD_PLAYER_HIGH_SCORE', authResult.email);
+      }
     },
     SMASH_ROACH({ commit }, tileId) {
       commit('resetTile', tileId);
@@ -163,7 +194,7 @@ export default new Vuex.Store({
 
         commit('setSaving', true);
         await saveScore({
-          playerId: getters.currentUser,
+          playerId: getters.currentUser.name,
           difficulty: state.game.difficulty,
           score: state.currentHighScore
         });

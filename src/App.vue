@@ -7,8 +7,8 @@
       <img class="hidden-xs-only" alt="game logo" height="50px" src="@/assets/logo.png">
       <v-toolbar-title class="hidden-xs-only">Cucaracha Smasha!</v-toolbar-title>
       <v-spacer></v-spacer>
-      <v-toolbar-title class="hidden-sm-and-up" v-if="isLoggedIn">Hi, {{ currentUser }}</v-toolbar-title>
-      <v-toolbar-title class="hidden-xs-only" v-if="isLoggedIn">Welcome, {{ currentUser }}</v-toolbar-title>
+      <v-toolbar-title class="hidden-sm-and-up" v-if="isLoggedIn">Hi, {{ playerName }}</v-toolbar-title>
+      <v-toolbar-title class="hidden-xs-only" v-if="isLoggedIn">Welcome, {{ playerName }}</v-toolbar-title>
       <v-btn v-if="isLoggedIn" @click="logout" icon>
         <v-icon>exit_to_app</v-icon>
       </v-btn>
@@ -40,7 +40,6 @@ export default {
         .auth()
         .signOut()
         .then(() => {
-          this.$store.dispatch('SET_USER', null);
           this.$store.dispatch('LOGOUT');
           this.$router.replace('login');
         });
@@ -52,7 +51,7 @@ export default {
         return this.currentUser;
       }
     },
-    ...mapGetters(['currentUser'])
+    ...mapGetters(['currentUser', 'playerName'])
   }
 };
 </script>
